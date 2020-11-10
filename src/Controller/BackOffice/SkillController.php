@@ -30,18 +30,33 @@ class SkillController extends AbstractController
         ]);
     }
 
-    public function create()
+    /**
+     * @Route("/create", name="skill_create")
+     * @param Request $request
+     */
+    public function create(Request $request): Response
     {
+        $skill = new Skill();
+        $form = $this->createForm(SkillType::class, $skill)->handleRequest($request);
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->persist($skill);
+            $this->getDoctrine()->getManager()->flush();
+            $this->addFlash("success", "Succès ! La compétence est ajoutée.");
+
+            return $this->redirectToRoute("skill_manage");
+        }
+        
+        return $this->render("back_office/skill/create.html.twig", [
+            "form" => $form->createView()
+        ]);
     }
 
     public function update()
     {
-
     }
 
     public function delete()
     {
-
     }
 }
